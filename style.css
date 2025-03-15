@@ -1,3 +1,4 @@
+/* ---- Global ---- */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -6,6 +7,7 @@ body {
     padding: 0;
 }
 
+/* ---- Conteneur principal ---- */
 .container {
     width: 50%;
     margin: 100px auto;
@@ -13,20 +15,20 @@ body {
     background: white;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
+    text-align: center;
 }
 
-h1 {
+/* ---- Titres ---- */
+h1, h2, h3 {
     color: #333;
 }
 
+/* ---- Paragraphes ---- */
 p {
     font-size: 18px;
 }
 
-.buttons {
-    margin-top: 20px;
-}
-
+/* ---- Boutons ---- */
 .btn {
     display: inline-block;
     padding: 10px 20px;
@@ -36,60 +38,104 @@ p {
     text-decoration: none;
     border-radius: 5px;
     font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
 }
 
 .btn:hover {
     background: #0056b3;
 }
-.error {
-    color: red;
-    font-size: 14px;
+
+.btn-danger {
+    background: red;
 }
 
+.btn-danger:hover {
+    background: darkred;
+}
+
+.btn-secondary {
+    background-color: gray;
+    text-decoration: none;
+    color: white;
+    border-radius: 5px;
+    padding: 10px;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.btn-secondary:hover {
+    background-color: darkgray;
+}
+
+/* ---- Formulaires ---- */
 .container form {
     display: flex;
     flex-direction: column;
-    width: 300px;
+    align-items: center; /* Centrer les éléments */
+    width: 100%;
+    max-width: 350px;
     margin: auto;
 }
 
-.container input, .container select {
+.container input, 
+.container select, 
+.container textarea {
+    width: 100%;
     padding: 10px;
     margin: 8px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 16px;
+    background-color: #f8f9fa;
 }
 
-button {
-    background: #28a745;
+/* Effet sur focus */
+.container input:focus,
+.container select:focus,
+.container textarea:focus {
+    border-color: #007BFF;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* ---- Bouton principal ---- */
+button, .btn-primary {
+    width: 100%;
+    max-width: 350px;
+    background: #007BFF;
     color: white;
-    padding: 10px;
+    padding: 12px;
     border: none;
     cursor: pointer;
-}
-
-button:hover {
-    background: #218838;
-}
-
-.container {
-    width: 50%;
-    margin: auto;
-    padding: 20px;
-    background: white;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
-    text-align: center;
+    font-size: 16px;
+    transition: background 0.3s ease;
 }
 
-h2, h3 {
-    color: #333;
+button:hover, .btn-primary:hover {
+    background: #0056b3;
 }
 
+/* ---- Messages d'erreur et de succès ---- */
+.error {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.success {
+    color: green;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* ---- Tableaux ---- */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 th, td {
@@ -103,62 +149,16 @@ th {
     color: white;
 }
 
-.btn {
-    display: inline-block;
-    padding: 10px 20px;
-    margin-top: 15px;
-    background: red;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-}
-
-.btn:hover {
-    background: darkred;
-}
-
-.container {
-    width: 50%;
-    margin: auto;
-    padding: 20px;
-    background: white;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
+/* ---- Affichage des photos de profil ---- */
+.photo-container {
     text-align: center;
+    margin-bottom: 20px;
 }
 
-.container input {
-    width: 100px;
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.profil-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ddd;
 }
-
-button {
-    background: #007BFF;
-    color: white;
-    padding: 10px;
-    border: none;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-button:hover {
-    background: #0056b3;
-}
-
-.btn-secondary {
-    background-color: gray;
-    padding: 10px;
-    text-decoration: none;
-    color: white;
-    border-radius: 5px;
-    display: inline-block;
-    margin-top: 10px;
-}
-
-.btn-secondary:hover {
-    background-color: darkgray;
-}
-

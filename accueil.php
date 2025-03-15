@@ -11,8 +11,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['is_admin']) {
 $user_id = $_SESSION['user_id'];
 
 try {
-    // Récupérer les infos de l'étudiant connecté
-    $stmt = $pdo->prepare("SELECT e.nom, e.prenom, c.nom AS classe 
+    // Récupérer les infos de l'étudiant connecté, y compris la photo
+    $stmt = $pdo->prepare("SELECT e.nom, e.prenom, e.photo, c.nom AS classe 
                            FROM etudiants e 
                            JOIN classes c ON e.classe_id = c.id 
                            WHERE e.id = ?");
@@ -29,7 +29,6 @@ try {
 } catch (PDOException $e) {
     die("Erreur : " . $e->getMessage());
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -45,6 +44,17 @@ try {
     <div class="container">
         <h2>Bienvenue, <?= htmlspecialchars($etudiant['prenom']) . " " . htmlspecialchars($etudiant['nom']) ?> !</h2>
         <p><strong>Classe :</strong> <?= htmlspecialchars($etudiant['classe']) ?></p>
+
+        <!-- Affichage de la photo de profil -->
+        <?php if (!empty($etudiant['photo'])) { ?>
+            <div class="photo-container">
+                <img src="<?= htmlspecialchars($etudiant['photo']) ?>" alt="Photo de profil" class="profil-photo">
+
+            </div>
+        <?php } else { ?>
+            <p>Aucune photo de profil disponible.</p>
+        <?php } ?>
+
 
         <h3>Vos Notes</h3>
         <table border="1">

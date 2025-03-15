@@ -7,35 +7,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $prenom = trim($_POST['prenom']);
     $email = trim($_POST['email']);
     $login = trim($_POST['login']);
-    $motdepasse = password_hash($_POST['motdepasse'], PASSWORD_DEFAULT); // Hachage du mot de passe
+    $motdepasse = password_hash($_POST['motdepasse'], PASSWORD_DEFAULT);
     $classe_id = $_POST['classe_id'];
 
-    try {
-        // Vérifier si l'email ou le login existe déjà
-        $stmt = $pdo->prepare("SELECT * FROM etudiants WHERE email = ? OR login = ?");
-        $stmt->execute([$email, $login]);
-        $existingUser = $stmt->fetch();
+    // Dossier où seront stockées les photos
+    $dossier =  "profils/";
+    $nomFichier = basename($_FILES["photo"]["name"]);
+    $cheminPhoto = $dossier . $nomFichier;
+    $uploadOk = 1;
+    $typeImage = strtolower(pathinfo($cheminPhoto, PATHINFO_EXTENSION));
 
-        if ($existingUser) {
-            $error = "Cet email ou login est déjà utilisé.";
-        } else {
-            // Insérer le nouvel étudiant
-            $stmt = $pdo->prepare("INSERT INTO etudiants (nom, prenom, email, login, motdepasse, classe_id) VALUES (?, ?, ?, ?, ?, ?)");
-            
-            if ($stmt->execute([$nom, $prenom, $email, $login, $motdepasse, $classe_id])) {
-                $_SESSION['success'] = "Inscription réussie ! Connectez-vous.";
-                header("Location: login.php");
-                exit();
+    // Vérification du format de l'image
+    if ($typeImage != "jpg" && $typeImage != "png" && $typeImage != "jpeg" && $typeImage != "gif") {
+        $erreur = "Seuls les fichiers JPG, JPEG, PNG & GIF sont autorisés.";
+        $uploadOk = 0;
+    }
+
+    // Si tout est bon, on tente d'uploader l'image
+    if ($uploadOk && move_uploaded_file($_FILES["photo"]["tmp_name"], $cheminPhoto)) {
+        try {
+            // Vérifier si l'email ou le login existe déjà
+            $stmt = $pdo->prepare("SELECT * FROM etudiants WHERE email = ? OR login = ?");
+            $stmt->execute([$email, $login]);
+            $existingUser = $stmt->fetch();
+
+            if ($existingUser) {
+                $erreur = "Cet email ou login est déjà utilisé.";
             } else {
-                $error = "Erreur lors de l'inscription.";
+                // Insérer le nouvel étudiant avec la photo
+                $stmt = $pdo->prepare("INSERT INTO etudiants (nom, prenom, email, login, motdepasse, classe_id, photo) 
+                                       VALUES (?, ?, ?, ?, ?, ?, ?)");
+                if ($stmt->execute([$nom, $prenom, $email, $login, $motdepasse, $classe_id, $cheminPhoto])) {
+                    $_SESSION['success'] = "Inscription réussie ! Connectez-vous.";
+                    header("Location: login.php");
+                    exit();
+                } else {
+                    $erreur = "Erreur lors de l'inscription.";
+                }
             }
+        } catch (PDOException $e) {
+            $erreur = "Erreur : " . $e->getMessage();
         }
-    } catch (PDOException $e) {
-        $error = "Erreur : " . $e->getMessage();
+    } else {
+        $erreur = "Erreur lors de l'upload de la photo.";
     }
 }
 
-// Récupérer la liste des classes pour afficher dans le formulaire
+// Récupérer la liste des classes
 try {
     $stmt = $pdo->query("SELECT * FROM classes");
     $classes = $stmt->fetchAll();
@@ -57,9 +75,9 @@ try {
     <div class="container">
         <h2>Inscription Étudiant</h2>
 
-        <?php if (!empty($error)) { echo "<p class='error'>$error</p>"; } ?>
+        <?php if (!empty($erreur)) { echo "<p class='error'>$erreur</p>"; } ?>
 
-        <form action="register.php" method="POST">
+        <form action="register.php" method="POST" enctype="multipart/form-data">
             <input type="text" name="nom" placeholder="Nom" required>
             <input type="text" name="prenom" placeholder="Prénom" required>
             <input type="email" name="email" placeholder="Email" required>
@@ -70,9 +88,12 @@ try {
             <select name="classe_id" required>
                 <option value="">-- Choisir une classe --</option>
                 <?php foreach ($classes as $classe) { ?>
-                    <option value="<?= $classe['id'] ?>"><?= htmlspecialchars($classe['nom']) ?></option>
+                    <option value="<?= $classe['id'] ?>"><?= $classe['nom'] ?></option>
                 <?php } ?>
             </select>
+
+            <label for="photo">Sélectionnez une photo de profil :</label>
+            <input type="file" name="photo" id="photo" required>
 
             <button type="submit">S'inscrire</button>
         </form>

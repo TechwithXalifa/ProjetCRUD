@@ -95,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['etudiant_id'], $_POST[
                 <select name="etudiant_id" required>
                     <option value="">-- Sélectionnez un étudiant --</option>
                     <?php foreach ($etudiants as $etudiant) { ?>
-                        <option value="<?= $etudiant['id'] ?>"><?= htmlspecialchars($etudiant['prenom'] . " " . $etudiant['nom']) ?></option>
+                        <option value="<?= $etudiant['id'] ?>"><?= $etudiant['prenom'] . " " . $etudiant['nom'] ?></option>
                     <?php } ?>
                 </select>
 
@@ -103,18 +103,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['etudiant_id'], $_POST[
                 <select name="matiere_id" required>
                     <option value="">-- Sélectionnez une matière --</option>
                     <?php foreach ($matieres as $matiere) { ?>
-                        <option value="<?= $matiere['id'] ?>"><?= htmlspecialchars($matiere['nom']) ?></option>
+                        <option value="<?= $matiere['id'] ?>"><?= $matiere['nom'] ?></option>
                     <?php } ?>
                 </select>
 
                 <label for="note">Note :</label>
-                <input type="number" step="0.01" name="note" required>
+                <input type="number" step="0.05" name="note" required>
 
                 <button type="submit">Ajouter la Note</button>
             </form>
         <?php } ?>
         
-        <a href="admin_dashboard.php" class="btn btn-secondary">Retour à l'acceuil</a>
+        <a href="accueil_admin.php" class="btn btn-secondary">Retour à l'acceuil</a>
         <a href="logout.php" class="btn">Se déconnecter</a>
     </div>
 
