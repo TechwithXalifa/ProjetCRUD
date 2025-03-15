@@ -72,7 +72,7 @@ if (isset($_POST['delete_note_id'])) {
             <?php } ?>
         </table>
 
-        <a href="admin_dashboard.php" class="btn btn-secondary">Retour au Tableau de Bord</a>
+        <a href="accueil_admin.php" class="btn btn-secondary">Retour au Tableau de Bord</a>
     </div>
 
 </body>
