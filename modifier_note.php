@@ -2,53 +2,51 @@
 session_start();
 include 'config.php';
 
-// Vérifier si l'utilisateur est un admin
+// Vérifier si l'utilisateur est bien un admin
 if (!isset($_SESSION['user_id']) || !$_SESSION['is_admin']) {
     header("Location: login.php");
     exit();
 }
 
-// Vérifier si un ID est passé en paramètre
+// Vérifier si un ID étudiant est passé en paramètre
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header("Location: gestion_notes.php");
     exit();
 }
 
-$note_id = $_GET['id'];
+$etudiant_id = $_GET['id'];
 
 try {
-    // Récupérer la note existante
-    $stmt = $pdo->prepare("SELECT n.id, n.note, e.nom AS etudiant_nom, e.prenom AS etudiant_prenom, m.nom AS matiere_nom
-                           FROM notes n
-                           JOIN etudiants e ON n.etudiant_id = e.id
-                           JOIN matieres m ON n.matiere_id = m.id
-                           WHERE n.id = ?");
-    $stmt->execute([$note_id]);
-    $note = $stmt->fetch();
+    // Récupérer les informations de l'étudiant
+    $stmt = $pdo->prepare("SELECT nom, prenom FROM etudiants WHERE id = ?");
+    $stmt->execute([$etudiant_id]);
+    $etudiant = $stmt->fetch();
 
-    // Si la note n'existe pas
-    if (!$note) {
-        header("Location: gestion_notes.php");
-        exit();
-    }
+    // Récupérer toutes les notes de l'étudiant
+    $stmt = $pdo->prepare("SELECT n.id, n.note, m.nom AS matiere_nom 
+                           FROM notes n
+                           JOIN matieres m ON n.matiere_id = m.id
+                           WHERE n.etudiant_id = ?");
+    $stmt->execute([$etudiant_id]);
+    $notes = $stmt->fetchAll();
 } catch (PDOException $e) {
     die("Erreur : " . $e->getMessage());
 }
 
-// Mise à jour de la note
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nouvelle_note'])) {
-    $nouvelle_note = $_POST['nouvelle_note'];
-
-    try {
-        $stmt = $pdo->prepare("UPDATE notes SET note = ? WHERE id = ?");
-        $stmt->execute([$nouvelle_note, $note_id]);
-
-        // Redirection après modification
-        header("Location: gestion_notes.php?success=modification");
-        exit();
-    } catch (PDOException $e) {
-        die("Erreur : " . $e->getMessage());
+// Vérifier si le formulaire a été soumis
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    foreach ($_POST['notes'] as $note_id => $nouvelle_note) {
+        try {
+            $stmt = $pdo->prepare("UPDATE notes SET note = ? WHERE id = ?");
+            $stmt->execute([$nouvelle_note, $note_id]);
+        } catch (PDOException $e) {
+            die("Erreur lors de la mise à jour des notes : " . $e->getMessage());
+        }
     }
+
+    // Rediriger après la modification
+    header("Location: gestion_notes.php?success=modification");
+    exit();
 }
 ?>
 
@@ -57,25 +55,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nouvelle_note'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifier la Note</title>
+    <title>Modifier les Notes</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
-        <h2>Modifier la Note</h2>
-        
-        <p><strong>Étudiant :</strong> <?= htmlspecialchars($note['etudiant_prenom'] . " " . $note['etudiant_nom']) ?></p>
-        <p><strong>Matière :</strong> <?= htmlspecialchars($note['matiere_nom']) ?></p>
+        <h2>Modifier les Notes de <?= htmlspecialchars($etudiant['prenom'] . " " . $etudiant['nom']) ?></h2>
 
-        <form action="modifier_note.php?id=<?= $note_id ?>" method="POST">
-            <label for="nouvelle_note">Nouvelle Note :</label>
-            <input type="number" step="0.01" name="nouvelle_note" value="<?= htmlspecialchars($note['note']) ?>" required>
+        <form action="modifier_note.php?id=<?= $etudiant_id ?>" method="POST">
+            <table>
+                <tr>
+                    <th>Matière</th>
+                    <th>Note</th>
+                    <th>Actions</th>
+                </tr>
+                <?php foreach ($notes as $note) { ?>
+                    <tr>
+                        <td><?= htmlspecialchars($note['matiere_nom']) ?></td>
+                        <td>
+                            <input type="number" step="0.01" name="notes[<?= $note['id'] ?>]" value="<?= htmlspecialchars($note['note']) ?>" required>
+                        </td>
+                        <td>
+                            <a href="supprimer_note.php?id=<?= $note['id'] ?>&etudiant_id=<?= $etudiant_id ?>" 
+                               class="btn btn-danger" 
+                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette note ?');">
+                                Supprimer
+                            </a>
+                        </td>
+                    </tr>
+                <?php } ?>
+            </table>
 
             <button type="submit">Mettre à jour</button>
         </form>
 
-        <a href="gestion_notes.php" class="btn btn-secondary">Retour à la Gestion des Notes</a>
+        <a href="gestion_notes.php" class="btn btn-secondary">Retour</a>
     </div>
 
 </body>

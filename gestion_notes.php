@@ -2,36 +2,30 @@
 session_start();
 include 'config.php';
 
-// Vérifier si l'utilisateur est un admin
+// Vérifier si l'utilisateur est bien un admin
 if (!isset($_SESSION['user_id']) || !$_SESSION['is_admin']) {
     header("Location: login.php");
     exit();
 }
 
-// Récupérer toutes les notes avec les infos des étudiants et matières
+// Récupérer la liste des classes
 try {
-    $stmt = $pdo->query("SELECT n.id, e.nom AS etudiant_nom, e.prenom AS etudiant_prenom, 
-                                m.nom AS matiere_nom, n.note 
-                         FROM notes n
-                         JOIN etudiants e ON n.etudiant_id = e.id
-                         JOIN matieres m ON n.matiere_id = m.id
-                         ORDER BY e.nom, m.nom");
-    $notes = $stmt->fetchAll();
+    $stmt = $pdo->query("SELECT * FROM classes");
+    $classes = $stmt->fetchAll();
 } catch (PDOException $e) {
-    die("Erreur : " . $e->getMessage());
+    die("Erreur lors du chargement des classes : " . $e->getMessage());
 }
 
-// Supprimer une note
-if (isset($_POST['delete_note_id'])) {
-    $note_id = $_POST['delete_note_id'];
-
+// Vérifier si une classe a été sélectionnée
+$etudiants = [];
+if (!empty($_POST['classe_id'])) {
+    $classe_id = $_POST['classe_id'];
     try {
-        $stmt = $pdo->prepare("DELETE FROM notes WHERE id = ?");
-        $stmt->execute([$note_id]);
-        header("Location: gestion_notes.php"); // Recharger la page après suppression
-        exit();
+        $stmt = $pdo->prepare("SELECT * FROM etudiants WHERE classe_id = ?");
+        $stmt->execute([$classe_id]);
+        $etudiants = $stmt->fetchAll();
     } catch (PDOException $e) {
-        die("Erreur : " . $e->getMessage());
+        die("Erreur lors du chargement des étudiants : " . $e->getMessage());
     }
 }
 ?>
@@ -47,32 +41,44 @@ if (isset($_POST['delete_note_id'])) {
 <body>
 
     <div class="container">
-        <h2>Gérer les Notes</h2>
+        <h2>Gestion des Notes</h2>
 
-        <table border="1">
-            <tr>
-                <th>Étudiant</th>
-                <th>Matière</th>
-                <th>Note</th>
-                <th>Actions</th>
-            </tr>
-            <?php foreach ($notes as $note) { ?>
+        <!-- Sélection d'une classe -->
+        <form action="gestion_notes.php" method="POST">
+            <label for="classe_id">Choisir une classe :</label>
+            <select name="classe_id" required onchange="this.form.submit()">
+                <option value="">-- Sélectionnez une classe --</option>
+                <?php foreach ($classes as $classe) { ?>
+                    <option value="<?= $classe['id'] ?>" <?= (!empty($classe_id) && $classe_id == $classe['id']) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($classe['nom']) ?>
+                    </option>
+                <?php } ?>
+            </select>
+        </form>
+
+        <!-- Affichage des étudiants de la classe sélectionnée -->
+        <?php if (!empty($etudiants)) { ?>
+            <h3>Liste des étudiants</h3>
+            <table>
                 <tr>
-                    <td><?= htmlspecialchars($note['etudiant_nom'] . " " . $note['etudiant_prenom']) ?></td>
-                    <td><?= htmlspecialchars($note['matiere_nom']) ?></td>
-                    <td><?= htmlspecialchars($note['note']) ?></td>
-                    <td>
-                        <a href="modifier_note.php?id=<?= $note['id'] ?>" class="btn btn-warning">Modifier</a>
-                        <form action="gestion_notes.php" method="POST" style="display:inline;">
-                            <input type="hidden" name="delete_note_id" value="<?= $note['id'] ?>">
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Supprimer cette note ?')">Supprimer</button>
-                        </form>
-                    </td>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Actions</th>
                 </tr>
-            <?php } ?>
-        </table>
-
-        <a href="accueil_admin.php" class="btn btn-secondary">Retour au Tableau de Bord</a>
+                <?php foreach ($etudiants as $etudiant) { ?>
+                    <tr>
+                        <td><?= htmlspecialchars($etudiant['nom']) ?></td>
+                        <td><?= htmlspecialchars($etudiant['prenom']) ?></td>
+                        <td>
+                            <a href="voir_notes.php?id=<?= $etudiant['id'] ?>" class="btn">Voir Notes</a>
+                            <a href="modifier_note.php?id=<?= $etudiant['id'] ?>" class="btn btn-secondary">Modifier</a>
+                        </td>
+                    </tr>
+                <?php } ?>
+            </table>
+        <?php } else if (!empty($classe_id)) { ?>
+            <p>Aucun étudiant trouvé pour cette classe.</p>
+        <?php } ?>
     </div>
 
 </body>
