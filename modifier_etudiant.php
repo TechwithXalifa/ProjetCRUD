@@ -89,22 +89,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <form action="modifier_etudiant.php?id=<?= $etudiant_id ?>" method="POST" enctype="multipart/form-data">
             <label>Nom :</label>
-            <input type="text" name="nom" value="<?= htmlspecialchars($etudiant['nom']) ?>" required>
+            <input type="text" name="nom" value="<?= $etudiant['nom'] ?>" required>
 
             <label>Prénom :</label>
-            <input type="text" name="prenom" value="<?= htmlspecialchars($etudiant['prenom']) ?>" required>
+            <input type="text" name="prenom" value="<?= $etudiant['prenom'] ?>" required>
 
             <label>Email :</label>
-            <input type="email" name="email" value="<?= htmlspecialchars($etudiant['email']) ?>" required>
+            <input type="email" name="email" value="<?= $etudiant['email'] ?>" required>
 
             <label>Login :</label>
-            <input type="text" name="login" value="<?= htmlspecialchars($etudiant['login']) ?>" required>
+            <input type="text" name="login" value="<?= $etudiant['login'] ?>" required>
 
             <label>Classe :</label>
             <select name="classe_id" required>
                 <?php foreach ($classes as $classe) { ?>
                     <option value="<?= $classe['id'] ?>" <?= ($etudiant['classe_id'] == $classe['id']) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($classe['nom']) ?>
+                        <?= $classe['nom'] ?>
                     </option>
                 <?php } ?>
             </select>
@@ -113,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php if (!empty($etudiant['photo'])) { ?>
                 <div class="photo-container">
                     <p>Photo actuelle :</p>
-                    <img src="<?= htmlspecialchars($etudiant['photo']) ?>" alt="Photo de profil" class="profil-photo">
+                    <img src="<?= $etudiant['photo'] ?>" alt="Photo de profil" class="profil-photo">
                 </div>
             <?php } ?>
 

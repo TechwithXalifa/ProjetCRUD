@@ -36,13 +36,13 @@ try {
     <div class="container">
         <h2><?= htmlspecialchars($etudiant['prenom'] . " " . $etudiant['nom']) ?></h2>
 
-        <p><strong>Email :</strong> <?= htmlspecialchars($etudiant['email']) ?></p>
-        <p><strong>Login :</strong> <?= htmlspecialchars($etudiant['login']) ?></p>
-        <p><strong>Classe :</strong> <?= htmlspecialchars($etudiant['classe']) ?></p>
+        <p><strong>Email :</strong> <?= $etudiant['email'] ?></p>
+        <p><strong>Login :</strong> <?= $etudiant['login'] ?></p>
+        <p><strong>Classe :</strong> <?= $etudiant['classe'] ?></p>
 
         <?php if (!empty($etudiant['photo'])) { ?>
             <div class="photo-container">
-                <img src="<?= htmlspecialchars($etudiant['photo']) ?>" alt="Photo de profil" class="profil-photo">
+                <img src="<?= $etudiant['photo'] ?>" alt="Photo de profil" class="profil-photo">
             </div>
         <?php } ?>
 

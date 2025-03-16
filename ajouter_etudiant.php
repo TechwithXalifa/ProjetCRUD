@@ -95,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <select name="classe_id" required>
                 <option value="">-- Sélectionnez une classe --</option>
                 <?php foreach ($classes as $classe) { ?>
-                    <option value="<?= $classe['id'] ?>"><?= htmlspecialchars($classe['nom']) ?></option>
+                    <option value="<?= $classe['id'] ?>"><?= $classe['nom'] ?></option>
                 <?php } ?>
             </select>
 

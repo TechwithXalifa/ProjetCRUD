@@ -62,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="container">
         <h2>Modifier les Notes de <?= $etudiant['prenom'] . " " . $etudiant['nom'] ?></h2>
-
+        
         <form action="modifier_note.php?id=<?= $etudiant_id ?>" method="POST">
             <table>
                 <tr>
@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php foreach ($notes as $note) { ?>
                     <tr>
                         <td><?= $note['matiere_nom'] ?></td>
-                        <td>
+                        <td>    
                             <input type="number" step="0.05" name="notes[<?= $note['id'] ?>]" value="<?= $note['note'] ?>" required>
                         </td>
                         <td>

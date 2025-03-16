@@ -67,8 +67,8 @@ if (!empty($_POST['classe_id'])) {
                 </tr>
                 <?php foreach ($etudiants as $etudiant) { ?>
                     <tr>
-                        <td><?= htmlspecialchars($etudiant['nom']) ?></td>
-                        <td><?= htmlspecialchars($etudiant['prenom']) ?></td>
+                        <td><?= $etudiant['nom'] ?></td>
+                        <td><?= $etudiant['prenom'] ?></td>
                         <td>
                             <a href="voir_notes.php?id=<?= $etudiant['id'] ?>" class="btn">Voir Notes</a>
                             <a href="modifier_note.php?id=<?= $etudiant['id'] ?>" class="btn btn-secondary">Modifier</a>
