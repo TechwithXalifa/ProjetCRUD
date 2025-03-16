@@ -79,6 +79,8 @@ if (!empty($_POST['classe_id'])) {
         <?php } else if (!empty($classe_id)) { ?>
             <p>Aucun étudiant trouvé pour cette classe.</p>
         <?php } ?>
+
+        <a href="accueil_admin.php" class="btn btn-secondary">Retour</a>
     </div>
 
 </body>
