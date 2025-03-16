@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
     <div class="container">
-        <h2>Modifier les Notes de <?= htmlspecialchars($etudiant['prenom'] . " " . $etudiant['nom']) ?></h2>
+        <h2>Modifier les Notes de <?= $etudiant['prenom'] . " " . $etudiant['nom'] ?></h2>
 
         <form action="modifier_note.php?id=<?= $etudiant_id ?>" method="POST">
             <table>
@@ -72,9 +72,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tr>
                 <?php foreach ($notes as $note) { ?>
                     <tr>
-                        <td><?= htmlspecialchars($note['matiere_nom']) ?></td>
+                        <td><?= $note['matiere_nom'] ?></td>
                         <td>
-                            <input type="number" step="0.01" name="notes[<?= $note['id'] ?>]" value="<?= htmlspecialchars($note['note']) ?>" required>
+                            <input type="number" step="0.05" name="notes[<?= $note['id'] ?>]" value="<?= $note['note'] ?>" required>
                         </td>
                         <td>
                             <a href="supprimer_note.php?id=<?= $note['id'] ?>&etudiant_id=<?= $etudiant_id ?>" 

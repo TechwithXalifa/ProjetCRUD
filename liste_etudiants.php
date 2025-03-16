@@ -31,6 +31,11 @@ try {
 
     <div class="container">
         <h2>Liste des Étudiants</h2>
+    
+        <?php if (isset($_GET['success']) && $_GET['success'] == 'suppression') { ?>
+            <p class="success">L'étudiant a été supprimé avec succès.</p>
+        <?php } ?>
+
 
         <!-- Bouton pour ajouter un étudiant -->
         <a href="ajouter_etudiant.php" class="btn btn-primary">Ajouter un Étudiant</a>

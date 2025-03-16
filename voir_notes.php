@@ -38,13 +38,13 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notes de <?= htmlspecialchars($etudiant['prenom'] . " " . $etudiant['nom']) ?></title>
+    <title>Notes de <?= $etudiant['prenom'] . " " . $etudiant['nom'] ?></title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="container">
-        <h2>Notes de <?= htmlspecialchars($etudiant['prenom'] . " " . $etudiant['nom']) ?></h2>
+        <h2>Notes de <?= $etudiant['prenom'] . " " . $etudiant['nom'] ?></h2>
         
         <table>
             <tr>
@@ -54,8 +54,8 @@ try {
             <?php if (count($notes) > 0) { 
                 foreach ($notes as $note) { ?>
                     <tr>
-                        <td><?= htmlspecialchars($note['matiere']) ?></td>
-                        <td><?= htmlspecialchars($note['note']) ?></td>
+                        <td><?= $note['matiere'] ?></td>
+                        <td><?= $note['note'] ?></td>
                     </tr>
                 <?php } 
             } else { ?>

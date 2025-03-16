@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['etudiant_id'], $_POST[
     try {
         $stmt = $pdo->prepare("INSERT INTO notes (etudiant_id, matiere_id, note) VALUES (?, ?, ?)");
         $stmt->execute([$etudiant_id, $matiere_id, $note]);
-        $success = "Note ajoutée avec succès !";
+        $succes = "Note ajoutée avec succès !";
     } catch (PDOException $e) {
         $error = "Erreur lors de l'ajout de la note : " . $e->getMessage();
     }
@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['etudiant_id'], $_POST[
 
         <p>Bienvenue, <strong><?= htmlspecialchars($_SESSION['login']) ?></strong></p>
 
-        <?php if (!empty($success)) { echo "<p class='success'>$success</p>"; } ?>
+        <?php if (!empty($succes)) { echo "<p class='success'>$succes</p>"; } ?>
         <?php if (!empty($error)) { echo "<p class='error'>$error</p>"; } ?>
 
         <h3>Ajouter une Note</h3>
@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['etudiant_id'], $_POST[
                 <option value="">-- Sélectionnez une classe --</option>
                 <?php foreach ($classes as $classe) { ?>
                     <option value="<?= $classe['id'] ?>" <?= (!empty($classe_id) && $classe_id == $classe['id']) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($classe['nom']) ?>
+                        <?= $classe['nom'] ?>
                     </option>
                 <?php } ?>
             </select>
